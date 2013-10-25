@@ -37,8 +37,8 @@
 #define MASK_INT_SYNC	        0x10
 #define MASK_INT_FIFO	        0x04
 #define MASK_AFIFO_INT		0x01
-#define MASK_FIFO_STATUS_AFULL	0x08 	 
-#define MIC_VOL                 0x55	
+#define MASK_FIFO_STATUS_AFULL	0x08
+#define MIC_VOL                 0x55
 #define SPI_MODE_MASK 0x0C  // CPOL = bit 3, CPHA = bit 2 on SPCR
 extern uint8  nAsrStatus;
 
@@ -65,7 +65,7 @@ uint8_t const  SPI_SCK_PIN = SCK_PIN;
 #define OPTIMIZE_HARDWARE_SPI
 
 #else  // SOFTWARE_SPI
-// define software SPI pins 
+// define software SPI pins
 /** SPI chip select pin */
 uint8_t const LD_CHIP_SELECT_PIN = 10;
 /** SPI Master Out Slave In pin */
@@ -87,8 +87,8 @@ public:
   void Input();
   inline static byte transfer(byte _data);
   inline static void attachInterrupt();
-  inline static void detachInterrupt(); 
-  uint8_t begin(uint8_t chipSelectPin); 
+  inline static void detachInterrupt();
+  uint8_t begin(uint8_t chipSelectPin);
   static void end();
   static void setBitOrder(uint8_t);
   static void setDataMode(uint8_t);
@@ -103,6 +103,7 @@ public:
   unsigned char LD_Check_ASRBusyFlag_b2();
   void LD_AsrStart();
   unsigned char LD_AsrRun();
+  unsigned char LD_AsrRun_successcw();
   unsigned char RunASR(int x,int y,char  (*p)[80]);
   unsigned char LD_AsrAddFixed( int x,int y,char  (*p)[80]);
   unsigned char LD_GetResult();

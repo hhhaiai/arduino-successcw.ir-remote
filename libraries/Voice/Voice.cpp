@@ -73,31 +73,31 @@ uint8_t VoiceClass::RSTB(uint8_t RSTB)
 {
   RSTB_=RSTB;
   pinMode(RSTB_,OUTPUT);
-  
+
 }
 
 void VoiceClass::LD_WriteReg(unsigned char address,unsigned char value)
 {
   address_=address;
   value_=value;
-	
+
   chipSelectLow();
   delay(10);
   Voice.transfer(0x04);
   Voice.transfer(address_);
   Voice.transfer(value_);
-  chipSelectHigh(); 
+  chipSelectHigh();
  }
 
 unsigned char VoiceClass::LD_ReadReg(unsigned char address)
-{ 
+{
   address_=address;
 
   chipSelectLow();
   delay(10);
   Voice.transfer(0x05);
   Voice.transfer(address_);
-  result = Voice.transfer(0x00);  
+  result = Voice.transfer(0x00);
   chipSelectHigh();
   return(result);
  }
@@ -119,29 +119,29 @@ void VoiceClass::LD_reset()
 void VoiceClass::LD_Init_Common()
 {
 
-  LD_ReadReg(0x06);  
-  LD_WriteReg(0x17, 0x35); 
+  LD_ReadReg(0x06);
+  LD_WriteReg(0x17, 0x35);
   delay(10);
-  LD_ReadReg(0x06);  
+  LD_ReadReg(0x06);
 
-  LD_WriteReg(0x89, 0x03);  
+  LD_WriteReg(0x89, 0x03);
   delay(5);
-  LD_WriteReg(0xcf, 0x43);  
+  LD_WriteReg(0xcf, 0x43);
   delay(5);
   LD_WriteReg(0xcb, 0x02);
 
-  LD_WriteReg(0x11, LD_PLL_11);  
+  LD_WriteReg(0x11, LD_PLL_11);
   LD_WriteReg(0x1e,0x00);
-  LD_WriteReg(0x19, LD_PLL_ASR_19); 
-  LD_WriteReg(0x1b, LD_PLL_ASR_1B);	
+  LD_WriteReg(0x19, LD_PLL_ASR_19);
+  LD_WriteReg(0x1b, LD_PLL_ASR_1B);
   LD_WriteReg(0x1d, LD_PLL_ASR_1D);
 
   delay(10);
   LD_WriteReg(0xcd, 0x04);
-  LD_WriteReg(0x17, 0x4c); 
+  LD_WriteReg(0x17, 0x4c);
   delay(5);
   LD_WriteReg(0xb9, 0x00);
-  LD_WriteReg(0xcf, 0x4f); 
+  LD_WriteReg(0xcf, 0x4f);
 }
 void VoiceClass::LD_Init_ASR()
 {
@@ -152,34 +152,34 @@ void VoiceClass::LD_Init_ASR()
   LD_WriteReg(0x17, 0x48);
   delay(10);
 
-  LD_WriteReg(0x3c, 0x80);  
+  LD_WriteReg(0x3c, 0x80);
   LD_WriteReg(0x3e, 0x07);
-  LD_WriteReg(0x38, 0xff);  
+  LD_WriteReg(0x38, 0xff);
   LD_WriteReg(0x3a, 0x07);
-  LD_WriteReg(0x40, 0);   
+  LD_WriteReg(0x40, 0);
   LD_WriteReg(0x42, 8);
-  LD_WriteReg(0x44, 0); 
-  LD_WriteReg(0x46, 8); 
+  LD_WriteReg(0x44, 0);
+  LD_WriteReg(0x46, 8);
   delay(1);
 }
 void VoiceClass::ProcessInt0()
-{ 
+{
   uint8 nAsrResCount=0;
   //detachInterrupt(0) ;
   ucRegVal = LD_ReadReg(0x2b);
 	if(nLD_Mode == LD_MODE_ASR_RUN)
 	{
 		LD_WriteReg(0x29,0) ;
-		LD_WriteReg(0x02,0) ;	
+		LD_WriteReg(0x02,0) ;
 		if((ucRegVal & 0x10) &&
-			LD_ReadReg(0xb2)==0x21 && 
+			LD_ReadReg(0xb2)==0x21 &&
 			LD_ReadReg(0xbf)==0x35)
 		{
-            
+
 			nAsrResCount = LD_ReadReg(0xba);
-			if(nAsrResCount>0 && nAsrResCount<4) 
+			if(nAsrResCount>0 && nAsrResCount<4)
 			{
-                                Serial.print( "ASR_FOUN ONE: ");
+                                Serial.print( "ASR_FOUND ONE: ");
 				nAsrStatus=LD_ASR_FOUNDOK;
 			}
 			else
@@ -187,7 +187,7 @@ void VoiceClass::ProcessInt0()
                                  Serial.println( "ASR_FOUND ZERO");
                                  Serial.println( " ");
 				nAsrStatus=LD_ASR_FOUNDZERO;
-			}	
+			}
 		}
 		else
 		{
@@ -195,18 +195,18 @@ void VoiceClass::ProcessInt0()
                         Serial.println( " ");
 			nAsrStatus=LD_ASR_FOUNDZERO;
 		}
-			
+
 		LD_WriteReg(0x2b, 0);
     	        LD_WriteReg(0x1C,0);
 
 		return;
 	}
-	
+
   delay(10);
-  //detachInterrupt(1); 
+  //detachInterrupt(1);
 }
 unsigned char VoiceClass::LD_Check_ASRBusyFlag_b2()
-{ 
+{
   uint8 j;
   uint8 flag = 0;
   for (j=0; j<10; j++)
@@ -216,7 +216,7 @@ unsigned char VoiceClass::LD_Check_ASRBusyFlag_b2()
 			flag = 1;
 			break;
 		}
-	  delay(10);		
+	  delay(10);
 	}
   return flag;
 }
@@ -224,6 +224,17 @@ unsigned char VoiceClass::LD_Check_ASRBusyFlag_b2()
 void VoiceClass::LD_AsrStart()
 {
   LD_Init_ASR();
+}
+
+unsigned char VoiceClass::LD_AsrRun_successcw()
+{
+	LD_WriteReg(0x37, 0x06);
+	  delay( 5 );
+  //Serial.println( LD_ReadReg(0xbf),BYTE);
+  //	LD_WriteReg(0x1c, 0x0b);
+  Input();
+  LD_WriteReg(0x29, 0x10);
+  LD_WriteReg(0xbd, 0x00);
 }
 
 unsigned char VoiceClass::LD_AsrRun()
@@ -261,18 +272,19 @@ unsigned char VoiceClass::RunASR(int x,int y,char (*p)[80])
   for (i=0; i<5; i++)	//防止由于硬件原因导致LD3320芯片工作不正常，所以一共尝试5次启动ASR识别流程
 	{
 		LD_AsrStart();
-
+		Serial.println(i);
 		delay(100);
 		if (LD_AsrAddFixed(x,y,p)==0)
 		{
-
+			//Serial.println("error1");
 			LD_reset();			//	LD3320芯片内部出现不正常，立即重启LD3320芯片
 			delay(100);			//	并从初始化开始重新ASR识别流程
-		continue;	
+		continue;
 		}
 		delay(10);
 		if (LD_AsrRun() == 0)
 		{
+			Serial.println("error2");
 			LD_reset();			//	LD3320芯片内部出现不正常，立即重启LD3320芯片
 			delay(100);			//	并从初始化开始重新ASR识别流程
                  continue;
@@ -291,17 +303,18 @@ unsigned char VoiceClass::LD_AsrAddFixed(int x,int y,char (*p)[80])
 	flag = 1;
 	for (k=0; k<x; k++)
 	{
-			
+
 		if(LD_Check_ASRBusyFlag_b2() == 0)
 		{
 			flag = 0;
+			Serial.println("ASR busy");
 			break;
 		}
-		
+
 		LD_WriteReg(0xc1, k);
 		LD_WriteReg(0xc3, 0 );
 		LD_WriteReg(0x08, 0x04);
-  
+
 		delay(1);
 		LD_WriteReg(0x08, 0x00);
 		delay(1);
@@ -311,14 +324,14 @@ unsigned char VoiceClass::LD_AsrAddFixed(int x,int y,char (*p)[80])
 			if (p[k][nAsrAddLength] == 0)
 				break;
 			LD_WriteReg(0x5, p[k][nAsrAddLength]);
- 
+
 		}
 		LD_WriteReg(0xb9, nAsrAddLength);
 		LD_WriteReg(0xb2, 0xff);
- 
+
 		LD_WriteReg(0x37, 0x04);
 	}
-  //Serial.println( LD_ReadReg(0xbf),BYTE);  
+  //Serial.println( LD_ReadReg(0xbf),BYTE);
   return flag;
 }
 

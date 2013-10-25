@@ -131,9 +131,9 @@
 #define RC6_T1		444
 #define RC6_RPT_LENGTH	46000
 
-#define SHARP_BIT_MARK 245
-#define SHARP_ONE_SPACE 1805
-#define SHARP_ZERO_SPACE 795
+#define SHARP_BIT_MARK 280
+#define SHARP_ONE_SPACE 1800
+#define SHARP_ZERO_SPACE 750
 #define SHARP_GAP 600000
 #define SHARP_TOGGLE_MASK 0x3FF
 #define SHARP_RPT_SPACE 3000
@@ -213,6 +213,7 @@ extern volatile irparams_t irparams;
 #define MIN_RC6_SAMPLES 1
 #define PANASONIC_BITS 48
 #define JVC_BITS 16
+#define SHARP_BITS 15
 
 
 

@@ -71,6 +71,7 @@ private:
   long decodePanasonic(decode_results *results);
   long decodeJVC(decode_results *results);
   long decodeHash(decode_results *results);
+  long decodeSHARP(decode_results *results);
   int compare(unsigned int oldval, unsigned int newval);
 
 } 
